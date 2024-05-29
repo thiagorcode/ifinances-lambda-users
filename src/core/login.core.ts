@@ -43,7 +43,7 @@ export class LoginCore {
       { expiresIn: '2d' },
     )
     return {
-      secretToken,
+      token: secretToken,
       refreshToken,
       id: user.id,
       email: user.email,

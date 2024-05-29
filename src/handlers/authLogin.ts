@@ -19,7 +19,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       {
         message: 'Acesso realizado com sucesso',
         user: {
-          token: userAccess.secretToken,
+          token: userAccess.token,
           id: userAccess.id,
           username: userAccess.username,
           email: userAccess.email
@@ -27,7 +27,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       },
       {
         headers: {
-          Authorization: userAccess.secretToken,
+          Authorization: userAccess.token,
           'Set-Cookie': `refreshToken=${userAccess.refreshToken}; HttpOnly; Secure`,
         },
       },
