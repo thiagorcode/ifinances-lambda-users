@@ -85,11 +85,12 @@ jobs:
         with:
           use-installer: true
       - name: Copy params.dev.json
-        run: cp params.dev.json template.params.json
-      - run: sam build --template ${SAM_TEMPLATE} \
-          --parameter-overrides $(cat template.yaml.params.json | jq -r 'to_entries[] | "\(.key)=\(.value)"' | tr '\n' ' ') \
-          --use-container
-
+        run: cp vars/dev/params.json template.params.json
+      - name: Extract params
+        id: extract_params
+        run: echo "PARAMETERS=$(cat template.params.json | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]')" >> "$GITHUB_OUTPUT"
+      - name: SAM Build
+        run: sam build --template ${SAM_TEMPLATE}
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
@@ -103,13 +104,16 @@ jobs:
 
       - name: Deploy to feature stack in the testing account
         shell: bash
+        env:
+          PARAMETERS: ${{ steps.extract_params.outputs.PARAMETERS }}
         run: |
-          sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
+          sam deploy --stack-name ${TESTING_STACK_NAME} \
             --capabilities CAPABILITY_IAM \
             --region ${TESTING_REGION} \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
-            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
+            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE} \
+            --parameter-overrides ${PARAMETERS}
 
   build-and-package:
     if: github.ref == 'refs/heads/main'
