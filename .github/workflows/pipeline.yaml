@@ -14,18 +14,18 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: services-users.yml
   TESTING_STACK_NAME: cfstack-ifinances-dev-users
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-dev-pipel-PipelineExecutionRole-snJysiDmDRqc
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionRo-XyFb3DFWKhAu
-  TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-r-artifactsbucket-xwrvz7uuawoj
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-dev-pipel-PipelineExecutionRole-cYUePyGvhVZn
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionRo-vTp0DtLtntYj
+  TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-r-artifactsbucket-ihwbdgduz72e
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   TESTING_REGION: sa-east-1
-  PROD_STACK_NAME: cfstack-ifinances-prod-users-t
-  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-prod-pipe-PipelineExecutionRole-Gg9xs35gN7nv
-  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-prod--CloudFormationExecutionRo-0k41ZnWQnY3d
-  PROD_ARTIFACTS_BUCKET: aws-sam-cli-managed-prod-pipeline--artifactsbucket-vkeua3jebnht
+  PROD_STACK_NAME: cfstack-ifinances-prod-users
+  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-prod-pipe-PipelineExecutionRole-gxyD7QfpdIJx
+  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::735084759467:role/aws-sam-cli-managed-prod--CloudFormationExecutionRo-MHlj4k33GZoc
+  PROD_ARTIFACTS_BUCKET: aws-sam-cli-managed-prod-pipeline--artifactsbucket-qpyrkj1ulw4v
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${PROD_IMAGE_REPOSITORY}" to
   # prod "sam package" and "sam deploy" commands.
