@@ -1,0 +1,12 @@
+version = 0.1
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "cfstack-ifinances-dev-users"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1v5lyb89zw0sl"
+s3_prefix = "cfstack-ifinances-dev-users"
+region = "sa-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
