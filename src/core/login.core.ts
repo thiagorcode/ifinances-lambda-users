@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import DynamoDBRepositoryInterface from '../repository/interface/usersRepository.interface'
 import { AppErrorException } from '../utils'
 
-export class ValidateAuthCore {
+export class LoginCore {
   constructor(private repository: DynamoDBRepositoryInterface) {}
 
   private comparePassword(password: string, userHashPassword: string, salt: string) {
@@ -25,8 +25,8 @@ export class ValidateAuthCore {
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
 
-    const jwtSecret = 'teste123'
-    const jwtToken = jwt.sign(
+    const jwtSecret = 'teste1234'
+    const secretToken = jwt.sign(
       {
         userId: user.id,
         email: user.email,
@@ -34,8 +34,17 @@ export class ValidateAuthCore {
       jwtSecret,
       { expiresIn: '12h' },
     )
+    const refreshToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+      },
+      jwtSecret,
+      { expiresIn: '2d' },
+    )
     return {
-      token: jwtToken,
+      secretToken,
+      refreshToken,
       id: user.id,
       email: user.email,
       username: user.username,

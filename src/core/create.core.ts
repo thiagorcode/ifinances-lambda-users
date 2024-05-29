@@ -15,7 +15,7 @@ export class CreateCore {
     }
     const isUserExist = await this.userRepository.findByUsername(user?.username)
 
-    if (!isUserExist) {
+    if (isUserExist) {
       throw new AppErrorException(400, 'Username já existe')
     }
     const userValidate = usersSchema.parse(user)

@@ -45,7 +45,7 @@ export class UsersRepository implements UsersRepositoryInterface {
     })
     const result = await this.dynamodbDocumentClient.send(params)
     console.log(result)
-    if (!result.Items) {
+    if (!result.Items?.length) {
       return null
     }
     return parseEventDynamoDB<UsersTypes>(result.Items[0])
