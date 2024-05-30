@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { UsersTypes } from './../shared/types/users.types'
 import { UsersRepository } from '../repository/users.repository'
 import { CreateCore } from '../core/create.core'
-import { AppErrorException, formatResponse } from '../utils'
+import { AppErrorException, formatResponse } from '../shared/utils'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {

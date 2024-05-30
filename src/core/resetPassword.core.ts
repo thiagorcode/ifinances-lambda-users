@@ -1,6 +1,6 @@
 import UserRepositoryInterface from '../repository/interface/usersRepository.interface'
 import { UserResetPasswordType } from '../shared/types'
-import { AppErrorException } from '../utils'
+import { AppErrorException } from '../shared/utils'
 import * as crypto from 'crypto'
 
 export class ResetPasswordCore {

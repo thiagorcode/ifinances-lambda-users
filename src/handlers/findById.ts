@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { UsersRepository } from '../repository/users.repository'
-import { AppErrorException, formatResponse } from '../utils'
+import { AppErrorException, formatResponse } from '../shared/utils'
 import { FindByIdCore } from '../core/findById.core'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {

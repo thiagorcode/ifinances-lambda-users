@@ -1,7 +1,7 @@
 import { usersSchema } from '../shared/schemas'
 import DynamoDBRepositoryInterface from '../repository/interface/usersRepository.interface'
 import { UsersTypes } from '../shared/types'
-import { AppErrorException } from '../utils'
+import { AppErrorException } from '../shared/utils'
 
 // TODO: Aplicar injenção de depedências
 export class CreateCore {

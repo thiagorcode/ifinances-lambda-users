@@ -102,12 +102,12 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${ResetPasswordUserFunction}
       RetentionInDays: 14
 
-  AuthLoginFunction:
+  LoginFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: makefile
     Properties:
-      Handler: dist/handlers/authLogin.handler
+      Handler: dist/handlers/login.handler
       FunctionName:
         Fn::Join:
         - '-'
@@ -122,7 +122,7 @@ Resources:
   AuthLoginLambdaLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/lambda/${AuthLoginFunction}
+      LogGroupName: !Sub /aws/lambda/${LoginFunction}
       RetentionInDays: 14
 
   AuthorizerFunction:

@@ -28,7 +28,6 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.js",
-    "../transactions/src/repository/redis.repository.ts"
   ],
   "exclude": [
     "node_modules",

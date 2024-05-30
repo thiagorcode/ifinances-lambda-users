@@ -1,6 +1,6 @@
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 
-export const parseEventDynamoDB = <T>(data: any | undefined): T | null => {
+export const parseEventDynamoDB = <T>(data?: any): T | null => {
   if (!data) {
     return null
   }

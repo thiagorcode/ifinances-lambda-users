@@ -1,5 +1,5 @@
 import DynamoDBRepositoryInterface from '../repository/interface/usersRepository.interface'
-import { AppErrorException } from '../utils'
+import { AppErrorException } from '../shared/utils'
 
 export class FindByIdCore {
   constructor(private dataRepository: DynamoDBRepositoryInterface) {}

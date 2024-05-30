@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent } from 'aws-lambda'
 import destr from 'destr'
 import { z } from 'zod'
-import { AppErrorException } from '../shared/utils'
+import { AppErrorException } from '../../shared/utils'
 
 export class ValidateRequestCore {
   static execute<T>(schema: z.ZodSchema, event: APIGatewayProxyEvent) {

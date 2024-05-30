@@ -3,7 +3,7 @@ import { PutCommand, DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@
 
 import UsersRepositoryInterface from './interface/usersRepository.interface'
 import { UsersTypes } from '../shared/types'
-import { parseEventDynamoDB } from '../utils/parseEventDynamoDB'
+import { parseEventDynamoDB } from '../shared/utils/parseEventDynamoDB'
 
 // TODO: Preciso pensar uma maneira para refatorar e separar cada metódo em um arquivo execute
 
