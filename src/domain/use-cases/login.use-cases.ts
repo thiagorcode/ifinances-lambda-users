@@ -20,7 +20,7 @@ export class LoginUseCases {
     const dataUser = await this.repository.findByUsername(username)
 
     if (!dataUser) {
-      console.info('user invalid')
+      console.info('user not found')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
 

@@ -39,7 +39,11 @@ export class FilterBuilder {
           break
       }
     })
-
+    console.debug({
+      expressionAttributeNames,
+      expressionAttributeValues,
+      filterExpression,
+    })
     return {
       expressionAttributeNames,
       expressionAttributeValues,
