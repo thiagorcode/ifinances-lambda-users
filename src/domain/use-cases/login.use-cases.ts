@@ -20,14 +20,14 @@ export class LoginUseCases {
     const dataUser = await this.repository.findByUsername(username)
 
     if (!dataUser) {
-      console.error('user invalid')
+      console.info('user invalid')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
 
     const userAuth = UserAuth.toDomain(dataUser, this.encryptPassword, this.generateTokenAdapter)
     const isMatchPassword = userAuth.comparePassword(password)
     if (!isMatchPassword) {
-      console.error('password invalid')
+      console.info('password invalid')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
     const secretToken = userAuth.generateSecretToken()

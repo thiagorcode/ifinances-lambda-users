@@ -15,13 +15,14 @@ export class UsersRepository implements UsersRepositoryInterface {
   }
 
   async findByUsername(username: string) {
-    const response = await this.databaseAdapter.query<UsersTypes>(username, [
+    const response = await this.databaseAdapter.scan<UsersTypes[]>([
       {
         attributeName: 'username',
         operator: 'EQ',
         value: username,
       },
     ])
+    if (!response) return null
     return response[0]
   }
 

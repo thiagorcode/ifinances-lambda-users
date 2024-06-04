@@ -1,6 +1,5 @@
 import { CreateUsers, UnmarshallingUser } from '../../shared/types'
 import { Entity } from '../common/entity'
-import { SchemaEnum } from '../../shared/enum/schema'
 import { EncryptPassword } from '../../adapter/encrypt-password/encrypt-password.adapter'
 import { GenerateTokenAdapter } from '../../adapter/generate-token/generate-token.adapter'
 export class User extends Entity<CreateUsers> {

@@ -2,11 +2,12 @@ import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt
 import { GenerateTokenAdapter } from '../../adapter/generate-token/generate-token.adapter'
 import { SchemaValidatorAdapter, schemaRegistry } from '../../adapter/schema-validator-adapter'
 import { UsersRepositoryInterface } from '../../domain/repository/interface/usersRepository.interface'
+import { AppErrorException } from '../../shared/utils'
 import { userMock } from '../__mocks__/user'
 import { LoginUseCases } from './../../domain/use-cases/login.use-cases'
 
 function fetchData() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve('data received')
     }, 1000)
@@ -14,10 +15,10 @@ function fetchData() {
 }
 
 const encryptPasswordFake: EncryptPasswordInterface = {
-  desEncrypt: (inputPassword, pass, salt) => {
+  desEncrypt: (inputPassword, pass) => {
     return inputPassword === pass
   },
-  encrypt: (encrypt) => {
+  encrypt: () => {
     return {
       passwordEncrypted: 't2421',
       salt: '241241',
@@ -26,15 +27,15 @@ const encryptPasswordFake: EncryptPasswordInterface = {
 }
 
 const userRepositoryFake: UsersRepositoryInterface = {
-  createUser: async (user) => {
+  createUser: async (user: any) => {
     console.log(user)
     await fetchData()
   },
-  findById: async (id) => {
+  findById: async () => {
     await fetchData()
     return userMock
   },
-  findByUsername: async (username) => {
+  findByUsername: async () => {
     await fetchData()
     return userMock
   },
@@ -56,11 +57,40 @@ describe('Login Use-case', () => {
       const result = await loginUseCase.execute('teste', '22142')
       expect(result).toEqual(
         expect.objectContaining({
-          id: 'bc0a2694-b626-4e95-a7f6-f8d65563becc',
           email: 'test@gmail.com',
           username: 'test',
         }),
       )
+    })
+  })
+
+  describe('Error', () => {
+    it("should return an error when it can't find the user", async () => {
+      const userRepoFake = {
+        ...userRepositoryFake,
+        findByUsername: async () => {
+          await fetchData()
+          return null
+        },
+      }
+      const loginUseCase = new LoginUseCases(
+        userRepoFake,
+        new GenerateTokenAdapter(),
+        encryptPasswordFake,
+        new SchemaValidatorAdapter(schemaRegistry),
+      )
+
+      await expect(loginUseCase.execute('teste', '22142')).rejects.toThrow(AppErrorException)
+    })
+    it("should return an error when the user's password is incorrect", async () => {
+      const loginUseCase = new LoginUseCases(
+        userRepositoryFake,
+        new GenerateTokenAdapter(),
+        encryptPasswordFake,
+        new SchemaValidatorAdapter(schemaRegistry),
+      )
+
+      await expect(loginUseCase.execute('teste', 'errorPassword')).rejects.toThrow(AppErrorException)
     })
   })
 })

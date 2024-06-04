@@ -1,4 +1,3 @@
-import { usersSchema } from '../../shared/schemas'
 import { UsersTypes } from '../../shared/types'
 import { AppErrorException } from '../../shared/utils'
 import { User } from '../entity/user.entity'

@@ -4,12 +4,20 @@
  */
 
 export default {
-  transform: {
-    '^.+\\.ts?$': 'esbuild-jest',
-  },
+  verbose: false,
   clearMocks: true,
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coverageProvider: 'v8',
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  collectCoverageFrom: ['src/**/*.ts'],
+  modulePathIgnorePatterns: [
+    '<rootDir>/dist/',
+    '<rootDir>/layers/',
+    '<rootDir>/.aws-sam',
+    '<rootDir>/src/__tests__/__mocks__',
+    '<rootDir>/jest.config.ts',
+  ],
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.ts$',
+  setupFilesAfterEnv: ['./jest.config.ts'],
 }
