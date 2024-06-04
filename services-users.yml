@@ -112,7 +112,7 @@ Resources:
         Fn::Join:
         - '-'
         - - Ref: AWS::StackName
-          - auth-login
+          - login
       Environment:
         Variables:
           TABLE_NAME: !Ref TableUserName
