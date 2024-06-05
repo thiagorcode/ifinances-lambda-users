@@ -18,7 +18,7 @@ export class FilterBuilder {
       const attributeValue = `:val${index}`
       const attributeName = `#attr${index}`
       expressionAttributeNames[attributeName] = filter.attributeName
-      expressionAttributeValues[attributeValue] = marshall(filter.value)
+      expressionAttributeValues[attributeValue] = marshall({ S: filter.value })
 
       if (filterExpression) {
         filterExpression += ' AND '
