@@ -18,6 +18,7 @@ export class LoginUseCases {
 
     UserAuth.validateRequest({ username, password }, this.schemaValidator)
     const dataUser = await this.repository.findByUsername(username)
+    console.debug(dataUser)
 
     if (!dataUser) {
       console.info('user not found')
