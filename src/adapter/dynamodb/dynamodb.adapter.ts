@@ -52,15 +52,8 @@ export class DynamoDbAdapter implements DynamoDBAdapterInterface {
       ExpressionAttributeNames: configQuery.expressionAttributeNames,
       ExpressionAttributeValues: configQuery.expressionAttributeValues,
     })
-    console.log({
-      TableName: this.tableName,
-      IndexName: indexName,
-      FilterExpression: configQuery.filterExpression,
-      ExpressionAttributeNames: configQuery.expressionAttributeNames,
-      ExpressionAttributeValues: configQuery.expressionAttributeValues,
-    })
+
     const result = await this.dynamodbDocumentClient.send(params)
-    console.log(result)
 
     if (!result.Items?.length) {
       return null

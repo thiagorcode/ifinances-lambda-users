@@ -25,13 +25,17 @@ export class LoginUseCases {
     }
 
     const userAuth = UserAuth.toDomain(dataUser, this.encryptPassword, this.generateTokenAdapter)
+    console.debug(userAuth)
     const isMatchPassword = userAuth.comparePassword(password)
+    console.debug(isMatchPassword)
+
     if (!isMatchPassword) {
       console.info('password invalid')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
     const secretToken = userAuth.generateSecretToken()
     const refreshToken = userAuth.generateRefreshToken()
+    console.debug(secretToken)
 
     return {
       token: secretToken,
