@@ -1,4 +1,3 @@
-import { marshall } from '@aws-sdk/util-dynamodb'
 import { FilterExpression } from './types'
 
 export class FilterBuilder {
@@ -18,7 +17,7 @@ export class FilterBuilder {
       const attributeValue = `:val${index}`
       const attributeName = `#attr${index}`
       expressionAttributeNames[attributeName] = filter.attributeName
-      expressionAttributeValues[attributeValue] = marshall({ S: filter.value })
+      expressionAttributeValues[attributeValue] = filter.value
 
       if (filterExpression) {
         filterExpression += ' AND '

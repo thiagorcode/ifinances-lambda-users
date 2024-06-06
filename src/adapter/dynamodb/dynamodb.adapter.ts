@@ -43,11 +43,16 @@ export class DynamoDbAdapter implements DynamoDBAdapterInterface {
     return Item as T | undefined
   }
   async scan<T extends object>(filters?: FilterExpression[], indexName?: string) {
-    console.log(this.tableName)
     const configQuery = FilterBuilder.build(filters)
-    console.log(configQuery)
 
     const params = new ScanCommand({
+      TableName: this.tableName,
+      IndexName: indexName,
+      FilterExpression: configQuery.filterExpression,
+      ExpressionAttributeNames: configQuery.expressionAttributeNames,
+      ExpressionAttributeValues: configQuery.expressionAttributeValues,
+    })
+    console.log({
       TableName: this.tableName,
       IndexName: indexName,
       FilterExpression: configQuery.filterExpression,
