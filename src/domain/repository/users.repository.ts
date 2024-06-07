@@ -22,8 +22,8 @@ export class UsersRepository implements UsersRepositoryInterface {
         value: username,
       },
     ])
-    console.log('response', response)
     if (!response) return null
+
     return response[0]
   }
 

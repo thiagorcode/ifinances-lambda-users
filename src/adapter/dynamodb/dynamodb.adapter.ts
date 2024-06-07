@@ -3,7 +3,6 @@ import { DynamoDBAdapterInterface } from './dynamodb-adapter.interface'
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { FilterBuilder } from './filterBuilder'
 import { FilterExpression } from './types'
-import { parseEventDynamoDB } from '../../shared/utils/parseEventDynamoDB'
 import { QueryBuilder } from './queryBuilder'
 
 export class DynamoDbAdapter implements DynamoDBAdapterInterface {
@@ -53,12 +52,12 @@ export class DynamoDbAdapter implements DynamoDBAdapterInterface {
       ExpressionAttributeValues: configQuery.expressionAttributeValues,
     })
 
-    const result = await this.dynamodbDocumentClient.send(params)
+    const response = await this.dynamodbDocumentClient.send(params)
 
-    if (!result.Items?.length) {
+    if (!response.Items?.length) {
       return null
     }
-    return parseEventDynamoDB<T>(result.Items[0])
+    return response.Items as T
   }
 
   async query<T extends object>(partitionKeyValue: string, filters: FilterExpression[], indexName?: string) {
