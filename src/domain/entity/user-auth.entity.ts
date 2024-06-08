@@ -44,7 +44,7 @@ export class UserAuth extends Entity<UsersTypes> {
         email: this.props.email,
         username: this.props.username,
       },
-      'test123',
+      'generated_test_1',
       '12h',
     )
   }
@@ -56,7 +56,7 @@ export class UserAuth extends Entity<UsersTypes> {
         email: this.props.email,
         username: this.props.username,
       },
-      'test123',
+      'generated_test_1',
       '62h',
     )
   }

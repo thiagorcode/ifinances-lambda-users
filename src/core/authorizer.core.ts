@@ -10,7 +10,7 @@ export class AuthorizerCore {
       const token = headerToken.split(' ')[1]
 
       // const kid = jwt.decode(token, { complete: true })?.['header']['kid']
-      const jwtSecret = 'teste1234'
+      const jwtSecret = 'generated_test_1'
       const verify = jwt.verify(token, jwtSecret)
       console.info(verify)
       return { isAuthorized: true, data: verify }
