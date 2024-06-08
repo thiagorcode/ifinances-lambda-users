@@ -5,15 +5,16 @@ import { SchemaValidatorInterface } from '../../adapter/schema-validator-adapter
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
 import { GenerateTokenInterface } from '../../adapter/generate-token/generate-token.interface'
 
-export class UserAuth extends Entity<UsersTypes> {
+type User = Omit<UsersTypes, 'id' | 'dtCreated' | 'dtUpdated'>
+export class UserAuth extends Entity<User> {
   private encryptPassword: EncryptPasswordInterface
   private generateToken: GenerateTokenInterface
   private constructor(
-    props: UsersTypes,
+    { id, dtCreated, dtUpdated, ...props }: UsersTypes,
     encryptPassword: EncryptPasswordInterface,
     generateToken: GenerateTokenInterface,
   ) {
-    super(props)
+    super(props, id, dtCreated, dtUpdated)
     this.encryptPassword = encryptPassword
     this.generateToken = generateToken
   }
@@ -40,7 +41,7 @@ export class UserAuth extends Entity<UsersTypes> {
   public generateSecretToken() {
     return this.generateToken.execute(
       {
-        id: this.id,
+        id: this.props.id,
         email: this.props.email,
         username: this.props.username,
       },
