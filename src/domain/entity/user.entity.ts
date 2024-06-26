@@ -1,17 +1,22 @@
 import { CreateUsers, UnmarshallingUser } from '../../shared/types'
 import { Entity } from '../common/entity'
 import { EncryptPassword } from '../../adapter/encrypt-password/encrypt-password.adapter'
-import { GenerateTokenAdapter } from '../../adapter/generate-token/generate-token.adapter'
+
 export class User extends Entity<CreateUsers> {
   private constructor({ id, dtCreated, dtUpdated, ...props }: CreateUsers) {
     super(props, id, dtCreated, dtUpdated)
   }
 
+  private static generatePassword(password: string) {
+    const encryptPassword = new EncryptPassword()
+    const { passwordEncrypted, salt } = encryptPassword.encrypt(password)
+    return { passwordEncrypted, salt }
+  }
+
   public static createUser(props: CreateUsers) {
     // Inject Dependency
     //(props: CreateUsers, encryptPassword: EncryptPassword)
-    const encryptPassword = new EncryptPassword()
-    const { passwordEncrypted, salt } = encryptPassword.encrypt(props.password)
+    const { passwordEncrypted, salt } = this.generatePassword(props.password)
     const userProps: CreateUsers = {
       email: props.email,
       username: props.username,
@@ -25,6 +30,18 @@ export class User extends Entity<CreateUsers> {
     const instance = new User(userProps)
     // instance.validate(SchemaEnum.CREATE_USER)
 
+    return instance
+  }
+
+  public static resetPassword(raw: UnmarshallingUser, newPassword: string) {
+    const { passwordEncrypted, salt } = this.generatePassword(newPassword)
+
+    const instance = new User({
+      ...raw,
+      password: passwordEncrypted,
+      salt: salt,
+      dtUpdated: new Date().toISOString(),
+    })
     return instance
   }
   public toCreateDto() {
@@ -42,30 +59,6 @@ export class User extends Entity<CreateUsers> {
     const isValidated = encryptPassword.desEncrypt(inputPassword, this.props.password, this.props.salt)
 
     return isValidated
-  }
-
-  public generateSecretToken(generateToken: GenerateTokenAdapter) {
-    return generateToken.execute(
-      {
-        id: this.id,
-        email: this.props.email,
-        username: this.props.username,
-      },
-      'test123',
-      '12h',
-    )
-  }
-
-  public generateRefreshToken(generateToken: GenerateTokenAdapter) {
-    return generateToken.execute(
-      {
-        id: this.id,
-        email: this.props.email,
-        username: this.props.username,
-      },
-      'test123',
-      '62h',
-    )
   }
 
   public static toDomain(raw: UnmarshallingUser) {

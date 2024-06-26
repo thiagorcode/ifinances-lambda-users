@@ -7,7 +7,7 @@ import { UsersRepository } from '../domain/repository'
 import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'
 import { SchemaValidatorAdapter, schemaRegistry } from '../adapter/schema-validator-adapter'
 import { EncryptPassword } from '../adapter/encrypt-password/encrypt-password.adapter'
-import { GenerateTokenAdapter } from '../adapter/generate-token/generate-token.adapter'
+import { JWTokenAdapter } from '../adapter/jw-token/jw-token.adapter'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -17,11 +17,11 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const body = destr<LoginTypes>(event.body)
     const database = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
     const repository = new UsersRepository(database)
-    const generateTokenAdapter = new GenerateTokenAdapter()
+    const jwtTokenAdapter = new JWTokenAdapter()
     const encryptPassword = new EncryptPassword()
     const schemaValidator = new SchemaValidatorAdapter(schemaRegistry)
 
-    const loginCore = new LoginUseCases(repository, generateTokenAdapter, encryptPassword, schemaValidator)
+    const loginCore = new LoginUseCases(repository, jwtTokenAdapter, encryptPassword, schemaValidator)
 
     const userAccess = await loginCore.execute(body.username, body.password)
 

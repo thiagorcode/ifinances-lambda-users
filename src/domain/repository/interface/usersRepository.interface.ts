@@ -6,4 +6,5 @@ export interface UsersRepositoryInterface {
   findByUsername(username: string): Promise<UsersTypes | null>
   findAll(): Promise<UsersTypes[] | null>
   createUser(user: User): Promise<void>
+  update(user: Partial<UsersTypes>): Promise<void>
 }

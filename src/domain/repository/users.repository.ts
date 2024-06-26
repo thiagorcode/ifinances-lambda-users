@@ -30,4 +30,8 @@ export class UsersRepository implements UsersRepositoryInterface {
   async findAll() {
     return await this.databaseAdapter.scan<UsersTypes[]>()
   }
+
+  async update(data: User) {
+    return await this.databaseAdapter.update(data)
+  }
 }

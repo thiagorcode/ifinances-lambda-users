@@ -1,14 +1,18 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { UsersRepository } from '../repository/users.repository'
 import { AppErrorException, formatResponse } from '../shared/utils'
-import { FindByIdCore } from '../core/findById.core'
+import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'
+import { UsersRepository } from '../domain/repository'
+import { FindByIdUseCases } from 'domain/use-cases'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     console.debug('Event:', event)
     const userId = event.pathParameters?.id
-    const repository = new UsersRepository()
-    const findByIdCore = new FindByIdCore(repository)
+    if (!userId) throw new AppErrorException(400, 'User Id not found!')
+
+    const databaseAdapter = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
+    const repository = new UsersRepository(databaseAdapter)
+    const findByIdCore = new FindByIdUseCases(repository)
     const users = await findByIdCore.execute(userId)
 
     return formatResponse(200, {

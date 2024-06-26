@@ -2,13 +2,13 @@ import { UsersRepositoryInterface } from '../repository/interface/usersRepositor
 import { AppErrorException } from '../../shared/utils'
 import { UserAuth } from '../entity/user-auth.entity'
 import { SchemaValidatorInterface } from '../../adapter/schema-validator-adapter'
-import { GenerateTokenInterface } from '../../adapter/generate-token/generate-token.interface'
+import { JWTokenInterface } from '../../adapter/jw-token/jw-token.interface'
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
 
 export class LoginUseCases {
   constructor(
     private repository: UsersRepositoryInterface,
-    private generateTokenAdapter: GenerateTokenInterface,
+    private generateTokenAdapter: JWTokenInterface,
     private encryptPassword: EncryptPasswordInterface,
     private schemaValidator: SchemaValidatorInterface,
   ) {}
@@ -18,7 +18,6 @@ export class LoginUseCases {
 
     UserAuth.validateRequest({ username, password }, this.schemaValidator)
     const dataUser = await this.repository.findByUsername(username)
-    console.debug(dataUser)
 
     if (!dataUser) {
       console.info('user not found')
@@ -26,14 +25,13 @@ export class LoginUseCases {
     }
 
     const userAuth = UserAuth.toDomain(dataUser, this.encryptPassword, this.generateTokenAdapter)
-    console.debug(userAuth)
     const isMatchPassword = userAuth.comparePassword(password)
-    console.debug(isMatchPassword)
 
     if (!isMatchPassword) {
       console.info('password invalid')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
+
     const secretToken = userAuth.generateSecretToken()
     const refreshToken = userAuth.generateRefreshToken()
     console.debug(secretToken)

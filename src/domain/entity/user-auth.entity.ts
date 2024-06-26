@@ -3,20 +3,21 @@ import { Entity } from '../common/entity'
 import { SchemaEnum } from '../../shared/enum/schema'
 import { SchemaValidatorInterface } from '../../adapter/schema-validator-adapter/schema-validator.interface'
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
-import { GenerateTokenInterface } from '../../adapter/generate-token/generate-token.interface'
+import { JWTokenInterface } from '../../adapter/jw-token/jw-token.interface'
 
 type User = Omit<UsersTypes, 'id' | 'dtCreated' | 'dtUpdated'>
 export class UserAuth extends Entity<User> {
   private encryptPassword: EncryptPasswordInterface
-  private generateToken: GenerateTokenInterface
+  private jwToken: JWTokenInterface
+
   private constructor(
     { id, dtCreated, dtUpdated, ...props }: UsersTypes,
     encryptPassword: EncryptPasswordInterface,
-    generateToken: GenerateTokenInterface,
+    jwToken: JWTokenInterface,
   ) {
     super(props, id, dtCreated, dtUpdated)
     this.encryptPassword = encryptPassword
-    this.generateToken = generateToken
+    this.jwToken = jwToken
   }
 
   public toCreateDto() {
@@ -39,9 +40,9 @@ export class UserAuth extends Entity<User> {
   }
 
   public generateSecretToken() {
-    return this.generateToken.execute(
+    return this.jwToken.generate(
       {
-        id: this.props.id,
+        id: this.id,
         email: this.props.email,
         username: this.props.username,
       },
@@ -51,7 +52,7 @@ export class UserAuth extends Entity<User> {
   }
 
   public generateRefreshToken() {
-    return this.generateToken.execute(
+    return this.jwToken.generate(
       {
         id: this.id,
         email: this.props.email,
@@ -62,10 +63,14 @@ export class UserAuth extends Entity<User> {
     )
   }
 
+  public static verifyToken(jwToken: JWTokenInterface, token: string) {
+    return jwToken.verify(token, 'generated_test_1')
+  }
+
   public static toDomain(
     raw: UsersTypes,
     encryptPassword: EncryptPasswordInterface,
-    generateToken: GenerateTokenInterface,
+    generateToken: JWTokenInterface,
   ): UserAuth {
     return new UserAuth(raw, encryptPassword, generateToken)
   }

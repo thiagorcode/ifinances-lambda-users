@@ -1,5 +1,6 @@
+import { JWTokenAdapter } from '../adapter/jw-token/jw-token.adapter'
 import { APIGatewayRequestAuthorizerEvent, APIGatewaySimpleAuthorizerWithContextResult } from 'aws-lambda'
-import { AuthorizerCore } from '../core/authorizer.core'
+import { AuthorizerUseCases } from 'domain/use-cases'
 
 type ContextRequestAuthorizer = {}
 
@@ -8,7 +9,8 @@ export const handler = async (
 ): Promise<APIGatewaySimpleAuthorizerWithContextResult<ContextRequestAuthorizer>> => {
   try {
     console.debug('Event:', event)
-    const authorizerCore = new AuthorizerCore()
+    const jwtTokenAdapter = new JWTokenAdapter()
+    const authorizerCore = new AuthorizerUseCases(jwtTokenAdapter)
     const authorizer = await authorizerCore.execute(event.headers?.authorization ?? '')
     console.info('status', authorizer)
     return { isAuthorized: authorizer.isAuthorized, context: authorizer.data ?? {} }

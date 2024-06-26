@@ -1,9 +1,17 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBAdapterInterface } from './dynamodb-adapter.interface'
-import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  ScanCommand,
+  QueryCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb'
 import { FilterBuilder } from './filterBuilder'
 import { FilterExpression } from './types'
 import { QueryBuilder } from './queryBuilder'
+import { UpdateBuilder } from './updateBuilder'
 
 export class DynamoDbAdapter implements DynamoDBAdapterInterface {
   private readonly dynamodbClient: DynamoDB
@@ -41,6 +49,35 @@ export class DynamoDbAdapter implements DynamoDBAdapterInterface {
     const { Item } = await this.dynamodbDocumentClient.send(params)
     return Item as T | undefined
   }
+
+  async update<T extends object>(data: T) {
+    const { expressionAttributeValues, keysContent, expressionAttributeNames, updateExpression } =
+      UpdateBuilder.builder({
+        item: data,
+        partitionKeyName: this.primaryKey,
+        sortKeyName: this.sortKey,
+      })
+    const params = new UpdateCommand({
+      TableName: this.tableName,
+      Key: {
+        ...keysContent,
+      },
+      ExpressionAttributeValues: expressionAttributeValues,
+      UpdateExpression: updateExpression,
+    })
+    const hasExpressionAttributeNames = Object.keys(expressionAttributeNames).length > 0
+
+    console.log('70 - params: ', JSON.stringify(params))
+
+    if (hasExpressionAttributeNames) {
+      params.input.ExpressionAttributeNames = expressionAttributeNames
+    }
+
+    console.log('76 - params: ', JSON.stringify(params))
+
+    await this.dynamodbDocumentClient.send(params)
+  }
+
   async scan<T extends object>(filters?: FilterExpression[], indexName?: string) {
     const configQuery = FilterBuilder.build(filters)
 
