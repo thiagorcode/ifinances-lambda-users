@@ -2,11 +2,15 @@ import jwt from 'jsonwebtoken'
 import { JWTokenInterface } from './jw-token.interface'
 
 export class JWTokenAdapter implements JWTokenInterface {
-  generate(payload: string | object | Buffer, secret: string, expire: string): string {
-    return jwt.sign(payload, secret, { expiresIn: expire })
+  private secret: string
+  constructor(secret: string) {
+    this.secret = secret
+  }
+  generate(payload: string | object | Buffer, expire: string): string {
+    return jwt.sign(payload, this.secret, { expiresIn: expire })
   }
 
-  verify(token: string, secret: string) {
-    return jwt.verify(token, secret)
+  verify(token: string) {
+    return jwt.verify(token, this.secret)
   }
 }

@@ -1,47 +1,60 @@
 import { UsersRepositoryInterface } from '../repository/interface/usersRepository.interface'
 import { AppErrorException } from '../../shared/utils'
-import { UserAuth } from '../entity/user-auth.entity'
 import { SchemaValidatorInterface } from '../../adapter/schema-validator-adapter'
 import { JWTokenInterface } from '../../adapter/jw-token/jw-token.interface'
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
+import { PayloadUserAuth } from '../../shared'
+import { SchemaEnum } from '../../shared/enum/schema'
 
 export class LoginUseCases {
   constructor(
     private repository: UsersRepositoryInterface,
-    private generateTokenAdapter: JWTokenInterface,
+    private jwToken: JWTokenInterface,
     private encryptPassword: EncryptPasswordInterface,
     private schemaValidator: SchemaValidatorInterface,
   ) {}
 
   async execute(username: string, password: string) {
     console.info('init login-use-case service')
+    this.schemaValidator.validate(SchemaEnum.LOGIN, { password, username })
 
-    UserAuth.validateRequest({ username, password }, this.schemaValidator)
-    const dataUser = await this.repository.findByUsername(username)
-
-    if (!dataUser) {
+    const user = await this.repository.findByUsername(username)
+    if (!user) {
       console.info('user not found')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
 
-    const userAuth = UserAuth.toDomain(dataUser, this.encryptPassword, this.generateTokenAdapter)
-    const isMatchPassword = userAuth.comparePassword(password)
+    const isMatchPassword = this.encryptPassword.desEncrypt(password, user.password, user.salt)
 
     if (!isMatchPassword) {
       console.info('password invalid')
       throw new AppErrorException(400, 'Usuário ou senha incorretos!')
     }
 
-    const secretToken = userAuth.generateSecretToken()
-    const refreshToken = userAuth.generateRefreshToken()
-    console.debug(secretToken)
+    const secretToken = this.jwToken.generate<PayloadUserAuth>(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      process.env.TIME_EXP_SECRET_TOKEN ?? '1h',
+    )
+
+    const refreshToken = this.jwToken.generate<PayloadUserAuth>(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      process.env.TIME_EXP_REFRESH_TOKEN ?? '5h',
+    )
 
     return {
       token: secretToken,
       refreshToken,
-      id: userAuth.id,
-      email: dataUser.email,
-      username: dataUser.username,
+      id: user.id,
+      email: user.email,
+      username: user.username,
     }
   }
 }

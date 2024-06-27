@@ -9,7 +9,7 @@ export const handler = async (
 ): Promise<APIGatewaySimpleAuthorizerWithContextResult<ContextRequestAuthorizer>> => {
   try {
     console.debug('Event:', event)
-    const jwtTokenAdapter = new JWTokenAdapter()
+    const jwtTokenAdapter = new JWTokenAdapter(process.env.SECRET_JWT!)
     const authorizerCore = new AuthorizerUseCases(jwtTokenAdapter)
     const authorizer = await authorizerCore.execute(event.headers?.authorization ?? '')
     console.info('status', authorizer)

@@ -6,6 +6,12 @@ Description: API de Users
 Parameters:
   TableUserName:
     Type: String
+  TimeExpExpireSecretToken:
+    Default: '12h'
+  TimeExpExpireRefreshToken:
+    Default: '5d'
+  SecretJwt:
+    Default: '913a0d76-7dcc-4538-b028-bc95e7933f3d'
 Globals:
   Function:
     Timeout: 15
@@ -116,13 +122,38 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref TableUserName
+          SECRET_JWT: !Ref SecretJwt
+          TIME_EXP_SECRET_TOKEN: !Ref TimeExpExpireSecretToken
+          TIME_EXP_REFRESH_TOKEN: !Ref TimeExpExpireRefreshToken
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref TableUserName
-  AuthLoginLambdaLogGroup:
+  LoginLambdaLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub /aws/lambda/${LoginFunction}
+      RetentionInDays: 14
+
+  RefreshTokenFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/refreshToken.handler
+      FunctionName:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::StackName
+          - refresh-token
+      Environment:
+        Variables:
+          SECRET_JWT: !Ref SecretJwt
+          TIME_EXP_SECRET_TOKEN: !Ref TimeExpExpireSecretToken
+          TIME_EXP_REFRESH_TOKEN: !Ref TimeExpExpireRefreshToken
+  RefreshTokenLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${RefreshTokenFunction}
       RetentionInDays: 14
 
   AuthorizerFunction:
@@ -139,6 +170,7 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref TableUserName
+          SECRET_JWT: !Ref SecretJwt
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref TableUserName

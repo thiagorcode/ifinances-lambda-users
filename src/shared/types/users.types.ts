@@ -29,3 +29,9 @@ export type UnmarshallingUser = {
   isActive: boolean
   isPasswordChange: boolean
 }
+
+export type PayloadUserAuth = {
+  id: string
+  email: string
+  username: string
+}

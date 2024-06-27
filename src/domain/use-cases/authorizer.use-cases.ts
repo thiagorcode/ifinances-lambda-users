@@ -1,5 +1,4 @@
 import { JWTokenInterface } from '../../adapter/jw-token/jw-token.interface'
-import { UserAuth } from '../entity/user-auth.entity'
 
 export class AuthorizerUseCases {
   constructor(private jwToken: JWTokenInterface) {}
@@ -11,9 +10,9 @@ export class AuthorizerUseCases {
       }
       const token = headerToken.split(' ')[1]
 
-      const verify = UserAuth.verifyToken(this.jwToken, token)
-      console.info(verify)
-      return { isAuthorized: true, data: verify }
+      const userVerify = this.jwToken.verify(token)
+      console.info(userVerify)
+      return { isAuthorized: true, data: userVerify }
     } catch (error) {
       console.error(error)
       return { isAuthorized: false }

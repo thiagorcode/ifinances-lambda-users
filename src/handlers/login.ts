@@ -17,7 +17,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const body = destr<LoginTypes>(event.body)
     const database = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
     const repository = new UsersRepository(database)
-    const jwtTokenAdapter = new JWTokenAdapter()
+    const jwtTokenAdapter = new JWTokenAdapter(process.env.SECRET_JWT!)
     const encryptPassword = new EncryptPassword()
     const schemaValidator = new SchemaValidatorAdapter(schemaRegistry)
 

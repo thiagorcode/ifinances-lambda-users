@@ -1,4 +1,4 @@
-.PHONY: build-CreateUserFunction build-FindByIdUserFunction build-LoginFunction build-AuthorizerFunction
+.PHONY: build-CreateUserFunction build-FindByIdUserFunction build-LoginFunction build-AuthorizerFunction build-RefreshTokenFunction build-ResetPasswordUserFunction
 .PHONY: build-RuntimeDependenciesLayer build-lambda-common 
 
 build-CreateUserFunction:
@@ -15,6 +15,9 @@ build-AuthorizerFunction:
 
 build-ResetPasswordUserFunction:
 	$(MAKE) HANDLER=src/handlers/resetPassword.ts build-lambda-common
+
+build-RefreshTokenFunction:
+	$(MAKE) HANDLER=src/handlers/refreshToken.ts build-lambda-common
 build-lambda-common:
 	npm install
 	rm -rf dist
