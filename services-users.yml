@@ -131,11 +131,11 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref TableUserName
-  LoginLambdaLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${LoginFunction}
-      RetentionInDays: 14
+  # LoginLambdaLogGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub /aws/lambda/${LoginFunction}
+  #     RetentionInDays: 14
 
   RefreshTokenFunction:
     Type: AWS::Serverless::Function
