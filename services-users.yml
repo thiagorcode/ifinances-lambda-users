@@ -7,10 +7,13 @@ Parameters:
   TableUserName:
     Type: String
   TimeExpExpireSecretToken:
+    Type: String
     Default: '12h'
   TimeExpExpireRefreshToken:
+    Type: String
     Default: '5d'
   SecretJwt:
+    Type: String
     Default: '913a0d76-7dcc-4538-b028-bc95e7933f3d'
 Globals:
   Function:
