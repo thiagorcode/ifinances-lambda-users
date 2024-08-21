@@ -1,10 +1,10 @@
 import { UsersRepositoryInterface } from '../repository/interface/usersRepository.interface'
-import { AppErrorException } from '../../shared/utils'
 import { SchemaValidatorInterface } from '../../adapter/schema-validator-adapter'
 import { JWTokenInterface } from '../../adapter/jw-token/jw-token.interface'
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
 import { PayloadUserAuth } from '../../shared'
 import { SchemaEnum } from '../../shared/enum/schema'
+import { BadRequestError } from '../../shared/utils/commonError'
 
 export class LoginUseCases {
   constructor(
@@ -21,14 +21,14 @@ export class LoginUseCases {
     const user = await this.repository.findByUsername(username)
     if (!user) {
       console.info('user not found')
-      throw new AppErrorException(400, 'Usuário ou senha incorretos!')
+      throw new BadRequestError('Usuário ou senha incorretos!')
     }
 
     const isMatchPassword = this.encryptPassword.desEncrypt(password, user.password, user.salt)
 
     if (!isMatchPassword) {
       console.info('password invalid')
-      throw new AppErrorException(400, 'Usuário ou senha incorretos!')
+      throw new BadRequestError('Usuário ou senha incorretos!')
     }
 
     const secretToken = this.jwToken.generate<PayloadUserAuth>(

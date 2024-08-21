@@ -1,13 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { AppErrorException, formatResponse } from '../shared/utils'
 import destr from 'destr'
+import { BaseError, formatResponse } from '../shared/utils'
 import { JWTokenAdapter } from '../adapter/jw-token/jw-token.adapter'
 import { RefreshTokenUseCases } from '../domain/use-cases/refresh-token.use-cases'
+import { BadRequestError } from '../shared/utils/commonError'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.body) {
-      throw new AppErrorException(400, 'Body not found!')
+      throw new BadRequestError('Body not found')
     }
     const body = destr<{ refreshToken?: string }>(event.body)
     const jwtTokenAdapter = new JWTokenAdapter(process.env.SECRET_JWT!)
@@ -31,8 +32,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AppErrorException) {
-      return formatResponse(err.statusCode, {
+    if (err instanceof BaseError) {
+      return formatResponse(err.httpCode, {
         message: err.message,
       })
     }

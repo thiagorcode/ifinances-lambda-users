@@ -1,5 +1,5 @@
 import { UsersRepositoryInterface } from '../repository/interface/usersRepository.interface'
-import { AppErrorException } from '../../shared/utils'
+import { BadRequestError } from '../../shared/utils/commonError'
 
 export class FindByIdUseCases {
   constructor(private dataRepository: UsersRepositoryInterface) {}
@@ -10,7 +10,7 @@ export class FindByIdUseCases {
       return await this.dataRepository.findById(id)
     } catch (error) {
       console.error(error)
-      throw new AppErrorException(400, 'Erro inesperado, tente novamente mais tarde!')
+      throw new BadRequestError('Erro inesperado, tente novamente mais tarde!')
     }
   }
 }

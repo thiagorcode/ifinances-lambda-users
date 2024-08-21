@@ -1,6 +1,6 @@
 import { destr } from 'destr'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { AppErrorException, formatResponse } from '../shared/utils'
+import { BadRequestError, BaseError, formatResponse } from '../shared/utils'
 import { UserResetPasswordType } from '../shared'
 import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'
 import { UsersRepository } from '../domain/repository'
@@ -9,7 +9,7 @@ import { ResetPasswordUseCase } from '../domain/use-cases/reset-password.use-cas
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.body) {
-      throw new AppErrorException(400, 'Body not found!')
+      throw new BadRequestError('Body not found!')
     }
     const body = destr<UserResetPasswordType>(event.body)
     const databaseAdapter = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
@@ -23,8 +23,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AppErrorException) {
-      return formatResponse(err.statusCode, {
+    if (err instanceof BaseError) {
+      return formatResponse(err.httpCode, {
         message: err.message,
       })
     }

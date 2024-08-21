@@ -1,14 +1,16 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { AppErrorException, formatResponse } from '../shared/utils'
+import { BaseError, formatResponse } from '../shared/utils'
 import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'
 import { UsersRepository } from '../domain/repository'
 import { FindByIdUseCases } from 'domain/use-cases'
+import { BadRequestError } from '../shared/utils/commonError'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     console.debug('Event:', event)
     const userId = event.pathParameters?.id
-    if (!userId) throw new AppErrorException(400, 'User Id not found!')
+
+    if (!userId) throw new BadRequestError('Query: UserId not found')
 
     const databaseAdapter = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
     const repository = new UsersRepository(databaseAdapter)
@@ -22,8 +24,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AppErrorException) {
-      return formatResponse(err.statusCode, {
+    if (err instanceof BaseError) {
+      return formatResponse(err.httpCode, {
         message: err.message,
       })
     }

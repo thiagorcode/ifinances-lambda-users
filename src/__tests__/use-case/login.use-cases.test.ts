@@ -1,8 +1,8 @@
 import { EncryptPasswordInterface } from '../../adapter/encrypt-password/encrypt-password.interface'
-import { GenerateTokenAdapter } from '../../adapter/generate-token/generate-token.adapter'
+import { JWTokenAdapter } from '../../adapter/jw-token/jw-token.adapter'
 import { SchemaValidatorAdapter, schemaRegistry } from '../../adapter/schema-validator-adapter'
 import { UsersRepositoryInterface } from '../../domain/repository/interface/usersRepository.interface'
-import { AppErrorException } from '../../shared/utils'
+import { BaseError } from '../../shared/utils'
 import { userMock } from '../__mocks__/user'
 import { LoginUseCases } from './../../domain/use-cases/login.use-cases'
 
@@ -43,13 +43,17 @@ const userRepositoryFake: UsersRepositoryInterface = {
     await fetchData()
     return [userMock]
   },
+  update: async () => {
+    await fetchData()
+    console.log('Sucesso')
+  },
 }
 describe('Login Use-case', () => {
   describe('success', () => {
     it('Should return success', async () => {
       const loginUseCase = new LoginUseCases(
         userRepositoryFake,
-        new GenerateTokenAdapter(),
+        new JWTokenAdapter('secret'),
         encryptPasswordFake,
         new SchemaValidatorAdapter(schemaRegistry),
       )
@@ -75,22 +79,22 @@ describe('Login Use-case', () => {
       }
       const loginUseCase = new LoginUseCases(
         userRepoFake,
-        new GenerateTokenAdapter(),
+        new JWTokenAdapter('secret'),
         encryptPasswordFake,
         new SchemaValidatorAdapter(schemaRegistry),
       )
 
-      await expect(loginUseCase.execute('teste', '22142')).rejects.toThrow(AppErrorException)
+      await expect(loginUseCase.execute('teste', '22142')).rejects.toThrow(BaseError)
     })
     it("should return an error when the user's password is incorrect", async () => {
       const loginUseCase = new LoginUseCases(
         userRepositoryFake,
-        new GenerateTokenAdapter(),
+        new JWTokenAdapter('secret'),
         encryptPasswordFake,
         new SchemaValidatorAdapter(schemaRegistry),
       )
 
-      await expect(loginUseCase.execute('teste', 'errorPassword')).rejects.toThrow(AppErrorException)
+      await expect(loginUseCase.execute('teste', 'errorPassword')).rejects.toThrow(BaseError)
     })
   })
 })

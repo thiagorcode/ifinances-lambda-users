@@ -1,18 +1,19 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { AppErrorException, formatResponse } from '../shared/utils'
-import { LoginTypes } from '../shared/types/login.types'
 import destr from 'destr'
+import { BaseError, formatResponse } from '../shared/utils'
+import { LoginTypes } from '../shared/types/login.types'
 import { LoginUseCases } from '../domain/use-cases'
 import { UsersRepository } from '../domain/repository'
 import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'
 import { SchemaValidatorAdapter, schemaRegistry } from '../adapter/schema-validator-adapter'
 import { EncryptPassword } from '../adapter/encrypt-password/encrypt-password.adapter'
 import { JWTokenAdapter } from '../adapter/jw-token/jw-token.adapter'
+import { BadRequestError } from '../shared/utils/commonError'
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.body) {
-      throw new AppErrorException(400, 'Body not found!')
+      throw new BadRequestError('Body not found')
     }
     const body = destr<LoginTypes>(event.body)
     const database = new DynamoDbAdapter(process.env.TABLE_NAME ?? '', 'id')
@@ -46,8 +47,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AppErrorException) {
-      return formatResponse(err.statusCode, {
+    if (err instanceof BaseError) {
+      return formatResponse(err.httpCode, {
         message: err.message,
       })
     }
