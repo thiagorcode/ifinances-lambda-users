@@ -1,7 +1,7 @@
 import { destr } from 'destr'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { UsersTypes } from './../shared/types/users.types'
-import { BaseError, formatResponse } from '../shared/utils'
+import { formatResponse } from '../shared/utils'
 import { CreateUseCases } from '../domain/use-cases'
 import { UsersRepository } from '../domain/repository'
 import { DynamoDbAdapter } from '../adapter/dynamodb/dynamodb.adapter'

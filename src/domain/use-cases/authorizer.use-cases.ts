@@ -11,7 +11,7 @@ export class AuthorizerUseCases {
       const token = headerToken.split(' ')[1]
 
       const userVerify = this.jwToken.verify(token)
-      console.info(userVerify)
+
       return { isAuthorized: true, data: userVerify }
     } catch (error) {
       console.error(error)

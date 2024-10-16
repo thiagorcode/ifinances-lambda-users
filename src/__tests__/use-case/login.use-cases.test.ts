@@ -96,5 +96,23 @@ describe('Login Use-case', () => {
 
       await expect(loginUseCase.execute('teste', 'errorPassword')).rejects.toThrow(BaseError)
     })
+
+    it('should return an error when username is invalid', async () => {
+      const userRepoFake = {
+        ...userRepositoryFake,
+        findByUsername: async () => {
+          await fetchData()
+          return null
+        },
+      }
+      const loginUseCase = new LoginUseCases(
+        userRepoFake,
+        new JWTokenAdapter('secret'),
+        encryptPasswordFake,
+        new SchemaValidatorAdapter(schemaRegistry),
+      )
+
+      await expect(loginUseCase.execute('', '22142')).rejects.toThrow(Error)
+    })
   })
 })

@@ -14,7 +14,7 @@ export class RefreshTokenUseCases {
     try {
       const userVerify = this.jwToken.verify(refreshToken)
       const user = destr<PayloadUserAuth>(userVerify)
-      console.log(user)
+
       const secretToken = this.jwToken.generate<PayloadUserAuth>(
         {
           id: user.id,

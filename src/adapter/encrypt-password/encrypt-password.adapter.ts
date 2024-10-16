@@ -1,5 +1,5 @@
-import { EncryptPasswordInterface, EncryptResponse } from './encrypt-password.interface'
 import * as crypto from 'crypto'
+import { EncryptPasswordInterface, EncryptResponse } from './encrypt-password.interface'
 
 export class EncryptPassword implements EncryptPasswordInterface {
   encrypt(password: string): EncryptResponse {
