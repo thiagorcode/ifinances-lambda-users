@@ -4,7 +4,7 @@ import { UsersRepositoryInterface } from './interface/usersRepository.interface'
 import { User } from '../../domain/entity/user.entity'
 
 export class UsersRepository implements UsersRepositoryInterface {
-  constructor(private databaseAdapter: DynamoDBAdapterInterface) {}
+  constructor(private readonly databaseAdapter: DynamoDBAdapterInterface) {}
 
   async createUser(data: User) {
     await this.databaseAdapter.add<UsersTypes>(data.toCreateDto())

@@ -34,10 +34,6 @@ export abstract class Entity<T> {
     this._dtUpdated = this.getISOString()
   }
 
-  // protected validate(schema: SchemaEnum, payload?: any): void {
-  //   SchemaValidatorAdapter.validate(schema, payload ?? this.props)
-  // }
-
   private getISOString(): string {
     return new Date().toISOString()
   }

@@ -1,19 +1,45 @@
-import { schemaRegistry } from '../../adapter/schema-validator-adapter'
-import { SchemaEnum } from '../../shared/enum/schema'
 import { SchemaValidatorAdapter } from './../../adapter/schema-validator-adapter/schema-validator.adapter'
+import { z } from 'zod'
 
-describe('Schema validator Adapter', () => {
-  const schemaValidatorAdapter = new SchemaValidatorAdapter(schemaRegistry)
+// Mock para o SchemaEnum
+enum MockSchemaEnum {
+  'CREATE_USER' = 'CREATE_USER',
+  'LOGIN' = 'LOGIN',
+}
 
-  it('Should validator schema with success', () => {
-    const user = schemaValidatorAdapter.validate(SchemaEnum.LOGIN, { password: `test`, username: `test` })
+describe('SchemaValidatorAdapter', () => {
+  let schemaValidatorAdapter: SchemaValidatorAdapter
 
-    expect(user).toBeUndefined()
+  beforeEach(() => {
+    const schemas = {
+      [MockSchemaEnum.LOGIN]: z.object({
+        username: z.string(),
+        password: z.string(),
+      }),
+      [MockSchemaEnum.CREATE_USER]: z.object({
+        email: z.string().email(),
+        password: z.string().min(6),
+      }),
+    }
+
+    schemaValidatorAdapter = new SchemaValidatorAdapter(schemas)
   })
 
-  // it('Should throw a error ', () => {
-  //   const user = schemaValidatorAdapter.validate(SchemaEnum.LOGIN, { password: `test`, username: `test` })
+  it('should validate successfully when schema and data are valid', () => {
+    expect(() => {
+      schemaValidatorAdapter.validate(MockSchemaEnum.LOGIN as any, { username: 'test', password: 'test123' })
+    }).not.toThrow()
+  })
 
-  //   expect(user).toBeUndefined()
-  // })
+  it('should throw an error when schema does not exist', () => {
+    expect(() => {
+      schemaValidatorAdapter.validate('NonExistentSchema' as any, { username: 'test', password: 'test123' })
+    }).toThrow('Schema not exist')
+  })
+
+  it('should throw a validation error for invalid data', () => {
+    expect(() => {
+      schemaValidatorAdapter.validate(MockSchemaEnum.CREATE_USER as any, { email: 'invalid-email', password: '123' })
+    }).toThrow('Erro de validação: Invalid email, String must contain at least 6 character(s)')
+  })
 })
