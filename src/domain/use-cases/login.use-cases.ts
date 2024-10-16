@@ -8,10 +8,10 @@ import { BadRequestError } from '../../shared/utils/commonError'
 
 export class LoginUseCases {
   constructor(
-    private repository: UsersRepositoryInterface,
-    private jwToken: JWTokenInterface,
-    private encryptPassword: EncryptPasswordInterface,
-    private schemaValidator: SchemaValidatorInterface,
+    private readonly repository: UsersRepositoryInterface,
+    private readonly jwToken: JWTokenInterface,
+    private readonly encryptPassword: EncryptPasswordInterface,
+    private readonly schemaValidator: SchemaValidatorInterface,
   ) {}
 
   async execute(username: string, password: string) {

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { JWTokenInterface } from './jw-token.interface'
 
 export class JWTokenAdapter implements JWTokenInterface {
-  private secret: string
+  private readonly secret: string
   constructor(secret: string) {
     this.secret = secret
   }

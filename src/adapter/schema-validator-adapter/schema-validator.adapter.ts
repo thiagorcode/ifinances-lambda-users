@@ -3,7 +3,7 @@ import { SchemaEnum } from '../../shared/enum/schema'
 import { SchemaValidatorInterface } from './schema-validator.interface'
 
 export class SchemaValidatorAdapter implements SchemaValidatorInterface {
-  private schemas: Record<SchemaEnum, ZodSchema<any>>
+  private readonly schemas: Record<SchemaEnum, ZodSchema<any>>
 
   constructor(schemas: Record<SchemaEnum, ZodSchema<any>>) {
     this.schemas = schemas
