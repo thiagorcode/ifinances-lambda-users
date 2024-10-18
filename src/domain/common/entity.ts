@@ -1,13 +1,13 @@
-import crypto from 'crypto'
+import { UniqueEntityId } from './unique-entity-id'
 
 export abstract class Entity<T> {
-  private readonly _id: string
+  private readonly _id: UniqueEntityId
   private readonly _dtCreated: string
   private _dtUpdated: string
   protected props: T
 
-  constructor(props: T, id?: string, dtCreated?: string, dtUpdated?: string) {
-    this._id = id ?? crypto.randomUUID()
+  protected constructor(props: T, id?: string, dtCreated?: string, dtUpdated?: string) {
+    this._id = new UniqueEntityId(id)
     this._dtCreated = dtCreated ?? this.getISOString()
     this._dtUpdated = dtUpdated ?? this.getISOString()
     this.props = {
@@ -19,7 +19,7 @@ export abstract class Entity<T> {
   }
 
   public get id(): string {
-    return this._id
+    return this._id.toValue()
   }
 
   public get created(): string {
@@ -33,10 +33,6 @@ export abstract class Entity<T> {
   public setUpdatedDate() {
     this._dtUpdated = this.getISOString()
   }
-
-  // protected validate(schema: SchemaEnum, payload?: any): void {
-  //   SchemaValidatorAdapter.validate(schema, payload ?? this.props)
-  // }
 
   private getISOString(): string {
     return new Date().toISOString()
